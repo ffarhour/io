@@ -21,7 +21,7 @@ class VegaGraphBase(object):
     Attributes:
         output_path: the output directory to write the vega-spec json files to.
         input_path: the input path containing the input json files to be processed.
-        config_path: the directory containing the json config files relevant to each plot type.
+        config_dir: the directory containing the json config files relevant to each plot type.
             Each config file will need to have a specific name of the format: '<plot type>_config.json'
         engine_name: the name of the engine used to run the algorithm (e.g. Gunrock). This is
             used to name the output files.
@@ -32,11 +32,11 @@ class VegaGraphBase(object):
     #list containing all jsons
     __input_jsons = []
 
-    def __init__(self,output_path,input_path,config_path,engine_name,algorithm_name):
+    def __init__(self,output_path,input_path,config_dir,engine_name,algorithm_name):
         """Initis base class with provided atrributes."""
         self.output_path = output_path
         self.input_path = input_path
-        self.config_path = config_path
+        self.config_dir = config_dir
         self.engine_name = engine_name
         self.algorithm_name = algorithm_name
 
@@ -52,10 +52,20 @@ class VegaGraphBase(object):
             if(os.path.splitext(f)[1]==".json") and (os.path.basename(f).startswith(self.algorithm_name)) and (not os.path.basename(f).startswith("_")):
                 self.__input_jsons += [json.load(open(self.input_path + f))]
 
+    def run(self,verbose=False):
+        """calls the relevant methods to convert input jsons to vega-spec jsons
+
+        Arguments:
+            verbose: If True, prints out what is happening. Default=False.
+        """
+        self.read_json()
+        graph = self.parse_jsons()
+        self.write_json(graph,"0",verbose)
+
 #TODO method to check whether config files exist. If not use default.
     def read_config(self):
         """Returns the json config file as a python object"""
-        return json.load(open(self.config_path + "bar_config.json"))
+        return json.load(open(self.config_dir +"/" + "bar_config.json"))
 
 
     def parse_jsons(self):
@@ -95,7 +105,7 @@ class VegaGraphBar(VegaGraphBase):
     Attributes:
         output_path: the output directory to write the vega-spec json files to.
         input_path: the input path containing the input json files to be processed.
-        config_path: the directory containing the json config files relevant to each plot type.
+        config_dir: the directory containing the json config files relevant to each plot type.
             Each config file will need to have a specific name of the format: '<plot type>_config.json'
         engine_name: the name of the engine used to run the algorithm (e.g. Gunrock). This is
             used to name the output files.
@@ -113,11 +123,11 @@ class VegaGraphBar(VegaGraphBase):
     """
 
 
-    def __init__(self,output_path,input_path,config_path,engine_name,algorithm_name,conditions_dict,axes_vars):
+    def __init__(self,output_path,input_path,config_dir,engine_name,algorithm_name,conditions_dict,axes_vars):
         """Instantiate the input arguments. References the base class __init__ to instantiate recurring ones."""
         self.conditions_dict = conditions_dict
         self.axes_vars = axes_vars
-        super(VegaGraphBar,self).__init__(output_path,input_path,config_path,engine_name,algorithm_name)
+        super(VegaGraphBar,self).__init__(output_path,input_path,config_dir,engine_name,algorithm_name)
 
 
     def parse_jsons(self):

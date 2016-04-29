@@ -48,10 +48,12 @@ def main(argv):
     # Create required arguments and instantite bar class object for testing.
     conditions = {"algorithm" : "BFS","undirected" : True ,"mark_predecessors" : True}
     axes_vars = {'x':'dataset','y':'m_teps'}
-    bar1 = json2vega.VegaGraphBar(args.o,args.d,"config_files/","g","BFS",conditions,axes_vars)
+    bar1 = json2vega.VegaGraphBar(output_path=args.o,input_path=args.d,config_dir="config_files",engine_name="g",algorithm_name="BFS",conditions_dict=conditions,axes_vars=axes_vars)
+    bar1.run(True)
+    """
     bar1.read_json()
     bar = bar1.parse_jsons()
-    bar1.write_json(bar,"0",True)
+    bar1.write_json(bar,"0",True)"""
 
 
 if __name__ == "__main__":
