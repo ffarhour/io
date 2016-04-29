@@ -5,6 +5,15 @@ Author: Farmehr Farhour f.farhour@gmail.com
 Some code refactored and re-used from testvl.py script written by JDO
 
 This file contains a base class, and a child class for each type of graph to be plotted.
+
+Dependencies:
+    python:
+        pandas (pip install pandas)
+        numpy (pip install numpy)
+    nodejs:
+        vega (sudo npm install vega)
+        vega-lite (sudo npm install vega-lite)
+
 """
 
 import pandas, numpy

@@ -8,6 +8,14 @@ The main scripts are listed below, with a brief description of their functionali
 * **json2vega.py**: Converts JSON outputs from graph algorithms to vega-spec json files to be plotted.
 * **test_json2vega.py**: Sample code to test json2vega.py. Contains sample code that shows how to call the functions in json2vega.py as intended.
 
+#### List of Dependencies:
+* python:
+	* pandas (pip install pandas)
+	* numpy (pip install numpy)
+* nodejs:
+	* vega (sudo npm install vega)
+	* vega-lite (sudo npm install vega-lite)
+
 ## How to generate vega-spec JSONs from input JSONs
 Note that the following assumes that text2json.py has already been run to generate the JSON files containing the outputs of the graph engines.
 
