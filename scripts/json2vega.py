@@ -23,22 +23,31 @@ class VegaGraphBase(object):
         input_path: the input path containing the input json files to be processed.
         config_dir: the directory containing the json config files relevant to each plot type.
             Each config file will need to have a specific name of the format: '<plot type>_config.json'
-        engine_name: the name of the engine used to run the algorithm (e.g. Gunrock). This is
-            used to name the output files.
-        algorithm_name: the name of the algorithm (e.g. BFS). This is used to name the
-            output files.
+        labels: a dictionary containing the relevant nouns required for naming the file and the axes of the
+            plots created. The names dictionary should contain 5 keys and their corresponding values.
+            They are:
+                engine_name: the name of the engine used to run the algorithm (e.g. Gunrock). This is
+                    used to name the output files.
+                algorithm_name: the name of the algorithm (e.g. BFS). This is used to name the
+                    output files.
+                x_axis: the label for the x_axis
+                y_axis: the label for the y_axis
+                file_suffix: the suffix to put at the end of the file being generated.
+                e.g. labels = {'engine_name':'g','algorithm_name':'BFS','x_axis':'Datasets','y_axis':'MTEPS','file_suffix':'0'}
+
     """
 
     #list containing all jsons
     __input_jsons = []
 
-    def __init__(self,output_path,input_path,config_dir,engine_name,algorithm_name):
+    def __init__(self,output_path,input_path,config_dir,labels):
         """Initis base class with provided atrributes."""
         self.output_path = output_path
         self.input_path = input_path
         self.config_dir = config_dir
-        self.engine_name = engine_name
-        self.algorithm_name = algorithm_name
+        self.engine_name = labels['engine_name']
+        self.algorithm_name = labels['algorithm_name']
+        self.file_suffix = labels['file_suffix']
 
 
     def read_json(self):
@@ -60,7 +69,7 @@ class VegaGraphBase(object):
         """
         self.read_json()
         graph = self.parse_jsons()
-        self.write_json(graph,"0",verbose)
+        self.write_json(graph,self.file_suffix,verbose)
 
 #TODO method to check whether config files exist. If not use default.
     def read_config(self):
@@ -107,10 +116,17 @@ class VegaGraphBar(VegaGraphBase):
         input_path: the input path containing the input json files to be processed.
         config_dir: the directory containing the json config files relevant to each plot type.
             Each config file will need to have a specific name of the format: '<plot type>_config.json'
-        engine_name: the name of the engine used to run the algorithm (e.g. Gunrock). This is
-            used to name the output files.
-        algorithm_name: the name of the algorithm (e.g. BFS). This is used to name the
-            output files.
+        labels: a dictionary containing the relevant nouns required for naming the file and the axes of the
+            plots created. The names dictionary should contain 5 keys and their corresponding values.
+            They are:
+                engine_name: the name of the engine used to run the algorithm (e.g. Gunrock). This is
+                    used to name the output files.
+                algorithm_name: the name of the algorithm (e.g. BFS). This is used to name the
+                    output files.
+                x_axis: the label for the x_axis
+                y_axis: the label for the y_axis
+                file_suffix: the suffix to put at the end of the file being generated.
+                e.g. labels = {'engine_name':'g','algorithm_name':'BFS','x_axis':'Datasets','y_axis':'MTEPS','file_suffix':'0'}
         conditions_dict: a dictionary containing the conditions to limit the input files to a
             specific category. For instance choosing files that were outputs of a BFS algorith.
             For instance the following dictionary limits the inputs to BFS algorithms that are undirected and
@@ -123,11 +139,13 @@ class VegaGraphBar(VegaGraphBase):
     """
 
 
-    def __init__(self,output_path,input_path,config_dir,engine_name,algorithm_name,conditions_dict,axes_vars):
+    def __init__(self,output_path,input_path,config_dir,labels,conditions_dict,axes_vars):
         """Instantiate the input arguments. References the base class __init__ to instantiate recurring ones."""
         self.conditions_dict = conditions_dict
         self.axes_vars = axes_vars
-        super(VegaGraphBar,self).__init__(output_path,input_path,config_dir,engine_name,algorithm_name)
+        self.x_axis_label = labels['x_axis']
+        self.y_axis_label = labels['y_axis']
+        super(VegaGraphBar,self).__init__(output_path,input_path,config_dir,labels)
 
 
     def parse_jsons(self):
@@ -151,7 +169,7 @@ class VegaGraphBar(VegaGraphBase):
         bar["data"] = {"values":df_restricted.to_dict(orient='records')}
         # add relevant attributes to y and x axes based on input data
         bar["encoding"]["y"]["field"]=self.axes_vars['y']
-        bar["encoding"]["y"]["axis"] = {"title":self.axes_vars['y']}
+        bar["encoding"]["y"]["axis"] = {"title":self.y_axis_label}
         #check whether axis is quantitative or ordinal. add respective attributes to json
         for key in self.axes_vars:
             if(df_restricted[self.axes_vars[key]].dtype=='float64'):
@@ -159,6 +177,7 @@ class VegaGraphBar(VegaGraphBase):
             else:
                 bar["encoding"][key]["type"]="ordinal"
         bar["encoding"]["x"]["field"]=self.axes_vars['x']
+        bar["encoding"]["x"]["axis"] = {"title":self.x_axis_label}
 
         #return json
         return bar
