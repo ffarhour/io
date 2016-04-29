@@ -11,25 +11,6 @@ import pandas, numpy
 import json, os, argparse          #built-in
 from subprocess import Popen, PIPE, STDOUT          #built-in
 
-class bcolors:
-    """Used to implement ANSI colors without the need to remember the numbers.
-
-    Does not contain any methods. Only contains variables.
-
-    Usage: simply concatenate bcolors.<color> at the start of string to be printed,
-        and bcolors.ENDC at the end of the string, to color the string with the
-        specified color.
-    """
-
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
 #Base class to produce vega-spec jsons
 class VegaGraphBase(object):
     """Base class for converting json outputs of different algorithms to vega-specific graph json files.
@@ -168,6 +149,5 @@ class VegaGraphBar(VegaGraphBase):
                 bar["encoding"][key]["type"]="ordinal"
         bar["encoding"]["x"]["field"]=self.axes_vars['x']
 
-        #print(json.dumps(bar))
         #return json
         return bar
