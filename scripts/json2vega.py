@@ -294,23 +294,35 @@ class VegaGraphScatter(VegaGraphBarBase):
         return super(VegaGraphScatter, self).parse_jsons()
 
 
-# class VegaGraphHeatmap(VegaGraphBase):
-#     """ """
-#     def __init__(self,output_path,input_path,config_dir,labels,conditions_dict,axes_vars):
-#         """Instantiate the input arguments. References the base class __init__ to instantiate recurring ones."""
-#         self.conditions_dict = conditions_dict
-#         self.axes_vars = axes_vars
-#         self.x_axis_label = labels['x_axis']
-#         self.y_axis_label = labels['y_axis']
-#         super(VegaGraphBar,self).__init__(output_path,input_path,config_dir,labels)
-#
-#     def parse_jsons(self):
-#         """Parses the input json files using Pandas.
-#
-#         Returns: the json file to be written to file.
-#         """
-#         pandas_df = super(VegaGraphBar, self).parse_jsons()
-#         # restricted bar graph, based on conditions_dict provided
-#         df_restricted = pandas_df
-#         for key, value in self.conditions_dict.iteritems():
-#             df_restricted = df_restricted.loc[df_restricted[key] == value]
+class VegaGraphHeatmap(VegaGraphBase):
+    """ """
+    def __init__(self,output_path,input_path,config_dir,labels,conditions_dict,axes_vars):
+        """Instantiate the input arguments. References the base class __init__ to instantiate recurring ones."""
+        self.conditions_dict = conditions_dict
+        self.axes_vars = axes_vars
+        self.x_axis_label = labels['x_axis']
+        self.y_axis_label = labels['y_axis']
+        super(VegaGraphHeatmap,self).__init__(output_path,input_path,config_dir,labels)
+        self.graph_type = "heatmap"
+
+    def parse_jsons(self):
+        """Parses the input json files using Pandas.
+
+        Returns: the json file to be written to file.
+        """
+        pandas_df = super(VegaGraphHeatmap, self).parse_jsons()
+        # restricted bar graph, based on conditions_dict provided
+        df_restricted = pandas_df
+        for key, value in self.conditions_dict.iteritems():
+            df_restricted = df_restricted.loc[df_restricted[key] == value]
+        # delete everything except dataset (index) and the desired variable
+        #df_restricted = pandas.DataFrame(df_restricted.set_index(self.axes_vars['x'])[self.axes_vars['y']])
+        df_restricted = df_restricted[['dataset', 'm_teps', 'alpha', 'beta']]
+        #rint is numpy's vectorized round to into
+        df_restricted = df_restricted.assign(m_teps_rounded=numpy.rint(df_restricted['m_teps']))
+        print(df_restricted)
+        # complete vega-lite bar description
+        heatmap = self.read_config()
+        heatmap["data"] = {"values": df_restricted.to_dict(orient='records')}
+        #print(heatmap)
+        return heatmap

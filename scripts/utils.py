@@ -96,7 +96,7 @@ def parseCmdLineArgs(argv, output_choices, plot_choices):
     parser.add_argument('--outputtype', metavar='<output type>', type=str, help='select the desired output format. Choices={%(choices)s}',choices=output_choices, required=True)
     parser.add_argument('--inputpath', metavar='<input path>', type=str,
                         help='directory containing input JSON files. Default= gunrock-output/ ',
-                        default='gunrock-output/', required=True)
+                        default='gunrock-output/')
     parser.add_argument('-o', metavar='<output path>', type=str,
                         help='directory for output files. Default= output/',
                         default='output/')

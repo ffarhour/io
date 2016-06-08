@@ -104,6 +104,14 @@ def main(argv):
                                           labels=names,
                                           conditions_dict=conditions,
                                           axes_vars=axes_vars)
+        @staticmethod
+        def heatmap():
+            return json2vega.VegaGraphHeatmap(output_path=args.o,
+                                          input_path=args.inputpath,
+                                          config_dir=args.config,
+                                          labels=names,
+                                          conditions_dict=conditions,
+                                          axes_vars=axes_vars)
 
     #get all method names of the case statement - used later for automating the case statement creation process, as well as the input argument choices
     plot_types = getClassMethods(PlotTypeCase)

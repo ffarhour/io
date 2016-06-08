@@ -1,9 +1,9 @@
-heatmap = {
+{
     "mark": "text",
     "encoding": {
         "row": {
             "field": "alpha",
-            "type": "ordinal",
+            "type": "ordinal"
         },
         "column": {
             "field": "beta",
@@ -11,12 +11,13 @@ heatmap = {
         },
         "color": {
             "field": "m_teps",
-            "type": "quantitative",
+            "type": "quantitative"
         },
         "text": {
             "field": "m_teps_rounded",
             "type": "quantitative",
-            "format": ""
+            "format": "*"
         }
-    }
+    },
+    "config": {"mark": {"applyColorToBackground": true}}
 }
